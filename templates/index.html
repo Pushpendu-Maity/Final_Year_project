@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Healthcare Recommendation & CDSS System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js for Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Top Glass Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>MediMind CDSS</h1>
+                    <span>Intelligent Healthcare Recommendation System</span>
+                </div>
+            </div>
+            <div class="system-status">
+                <div class="status-badge live">
+                    <span class="pulse-dot"></span> Relational DB Online
+                </div>
+                <div class="status-badge ml">
+                    <i class="fa-solid fa-brain"></i> ML Mining Engine Active
+                </div>
+                <button class="btn-primary-sm" onclick="retrainModels()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Retrain Models
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs-bar">
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="tab-cdss">
+                <i class="fa-solid fa-stethoscope"></i> Clinical Diagnosis (CDSS)
+            </button>
+            <button class="tab-btn" data-tab="tab-treatment">
+                <i class="fa-solid fa-pills"></i> Treatment & Prevention
+            </button>
+            <button class="tab-btn" data-tab="tab-simulator">
+                <i class="fa-solid fa-dna"></i> Digital Health Twin (10-Yr Simulator)
+            </button>
+            <button class="tab-btn" data-tab="tab-database">
+                <i class="fa-solid fa-database"></i> Relational DB Explorer
+            </button>
+            <button class="tab-btn" data-tab="tab-datamining">
+                <i class="fa-solid fa-chart-network"></i> Data Mining Visualizer
+            </button>
+            <button class="tab-btn" data-tab="tab-report">
+                <i class="fa-solid fa-file-medical"></i> Medical Report
+            </button>
+            <button class="tab-btn" data-tab="tab-about">
+                <i class="fa-solid fa-circle-info"></i> Project Docs & ML Tuning
+            </button>
+        </div>
+    </nav>
+
+    <!-- Notification Toast -->
+    <div id="toast-notification" class="toast-popup hidden">
+        <i class="fa-solid fa-circle-check"></i>
+        <div id="toast-message">Record saved successfully.</div>
+    </div>
+
+    <!-- Main Body Container -->
+    <main class="app-main-content">
+
+        <!-- TAB 1: CLINICAL DIAGNOSIS (CDSS) -->
+        <section id="tab-cdss" class="tab-pane active">
+            <div class="grid-layout-2col">
+                <!-- Left Panel: Symptom, Vitals & Patient Identity Input -->
+                <div class="glass-card input-panel">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-user-doctor"></i> Patient Clinical Intake</h2>
+                        <span class="sub-text">Enter patient identity, vital metrics, symptoms, and medical history</span>
+                    </div>
+
+                    <!-- Patient Identity Section -->
+                    <div class="form-section highlight-box">
+                        <h3><i class="fa-solid fa-id-card"></i> Patient Identification</h3>
+                        <div class="form-grid-2col">
+                            <div class="form-group">
+                                <label for="patient-full-name"><i class="fa-solid fa-user"></i> Full Name *</label>
+                                <input type="text" id="patient-full-name" placeholder="e.g. John Doe / Sarah Connor" value="Rahul Sharma">
+                            </div>
+                            <div class="form-group">
+                                <label for="vital-gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                                <select id="vital-gender">
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vitals Section -->
+                    <div class="form-section">
+                        <h3><i class="fa-solid fa-gauge-high"></i> Physiological Metrics & Lifestyle</h3>
+                        <div class="form-grid-3col">
+                            <div class="form-group">
+                                <label>Age (Years)</label>
+                                <input type="number" id="vital-age" value="38" min="1" max="110">
+                            </div>
+                            <div class="form-group">
+                                <label>BMI (kg/m²)</label>
+                                <input type="number" id="vital-bmi" value="25.4" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>BP Systolic (mmHg)</label>
+                                <input type="number" id="vital-bp-sys" value="128">
+                            </div>
+                            <div class="form-group">
+                                <label>BP Diastolic (mmHg)</label>
+                                <input type="number" id="vital-bp-dia" value="84">
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Glucose (mg/dL)</label>
+                                <input type="number" id="vital-glucose" value="105">
+                            </div>
+                            <div class="form-group">
+                                <label>Cholesterol (mg/dL)</label>
+                                <input type="number" id="vital-cholesterol" value="190">
+                            </div>
+                            <div class="form-group">
+                                <label>Smoking Status</label>
+                                <select id="vital-smoking">
+                                    <option value="Never" selected>Never Smoked</option>
+                                    <option value="Former">Former Smoker</option>
+                                    <option value="Current">Current Smoker</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Physical Activity</label>
+                                <select id="vital-activity">
+                                    <option value="Moderate" selected>Moderate (3-4 days/wk)</option>
+                                    <option value="Sedentary">Sedentary (Little/None)</option>
+                                    <option value="Active">Active (Athletic)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expanded Medical History & Allergies Section -->
+                    <div class="form-section">
+                        <div class="section-header-flex">
+                            <h3><i class="fa-solid fa-notes-medical"></i> Medical History & Known Allergies</h3>
+                            <span class="sub-text-xs">Used for contraindication screening</span>
+                        </div>
+                        <div class="checkbox-tags" id="history-tags-container">
+                            <label class="tag-checkbox"><input type="checkbox" value="Basic / Recurrent Fever"> Recurrent Fever</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Recurrent Epistaxis (Nose Bleeding)" checked> Nose Bleeding (Epistaxis)</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Hypertension"> Hypertension</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Type 2 Diabetes"> Type 2 Diabetes</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Penicillin Drug Allergy" checked> Penicillin Allergy</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Sulfa Drug Allergy"> Sulfa Drug Allergy</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Aspirin / NSAID Sensitivity"> NSAID / Aspirin Sensitivity</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Chronic Asthma"> Asthma</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Chronic Sinusitis & Rhinitis"> Chronic Sinusitis</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Acid Reflux / GERD"> GERD / Acidity</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Chronic Kidney Disease"> Kidney Disease</label>
+                            <label class="tag-checkbox"><input type="checkbox" value="Migraine History"> Migraines</label>
+                        </div>
+                    </div>
+
+                    <!-- Expanded Symptoms Selection Section -->
+                    <div class="form-section">
+                        <div class="section-header-flex">
+                            <h3><i class="fa-solid fa-list-check"></i> Select Active Symptoms</h3>
+                            <button class="btn-link" onclick="clearSelectedSymptoms()"><i class="fa-solid fa-eraser"></i> Clear All</button>
+                        </div>
+                        
+                        <!-- Categorized Filter Pills -->
+                        <div class="category-pills" id="symptom-category-pills">
+                            <button class="pill-btn active" onclick="filterSymptomCategory('all')">All Symptoms (53)</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Fever & General')">Fever & General</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('ENT & Respiratory')">ENT & Respiratory</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Cardiovascular')">Cardiovascular</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Gastrointestinal')">Gastrointestinal</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Neurological')">Neurological</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Orthopedic')">Orthopedic</button>
+                            <button class="pill-btn" onclick="filterSymptomCategory('Endocrine & Renal')">Endocrine & Renal</button>
+                        </div>
+
+                        <!-- Search within symptoms -->
+                        <div class="symptom-quick-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="symptom-search-box" placeholder="Filter symptoms (e.g. fever, nose, chest, cough)..." onkeyup="searchSymptomsInline()">
+                        </div>
+
+                        <!-- Symptoms Grid -->
+                        <div class="symptoms-selector-box" id="symptoms-selector-grid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <button class="btn-action-primary" onclick="runDiagnosis()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Execute CDSS AI Diagnosis & Save to DB
+                    </button>
+                </div>
+
+                <!-- Right Panel: Diagnostic Results Output -->
+                <div class="glass-card output-panel">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-clipboard-check"></i> Clinical Decision Output</h2>
+                        <span class="sub-text">AI Diagnostic Differential, Triage Assessment & Relational Link</span>
+                    </div>
+
+                    <div id="cdss-welcome-state" class="empty-state">
+                        <i class="fa-solid fa-laptop-medical"></i>
+                        <h3>Ready for Clinical Analysis</h3>
+                        <p>Fill in patient name, select active symptoms (e.g. <strong>Basic Fever</strong> or <strong>Nose Bleeding</strong>) and click <strong>"Execute CDSS AI Diagnosis"</strong>.</p>
+                        <div class="demo-quick-buttons">
+                            <span>Or try quick preset cases:</span>
+                            <button class="pill-btn-sm" onclick="loadCasePreset('epistaxis')">Nose Bleeding & Sinusitis</button>
+                            <button class="pill-btn-sm" onclick="loadCasePreset('cold_fever')">Basic Fever & Cold</button>
+                            <button class="pill-btn-sm" onclick="loadCasePreset('cardiac')">Chest Pain & Palpitations</button>
+                            <button class="pill-btn-sm" onclick="loadCasePreset('gastro')">Vomiting & Diarrhea</button>
+                        </div>
+                    </div>
+
+                    <div id="cdss-results-container" class="results-wrapper hidden">
+                        <!-- Patient Stored Badge -->
+                        <div class="db-saved-banner" id="db-saved-banner">
+                            <i class="fa-solid fa-database"></i>
+                            <span id="db-saved-banner-text">Patient Record Saved to SQLite Database (ID #...)</span>
+                        </div>
+
+                        <!-- Triage Alert Banner -->
+                        <div id="triage-banner" class="triage-banner">
+                            <div class="triage-badge" id="triage-badge-text">ROUTINE</div>
+                            <div class="triage-info">
+                                <h4 id="triage-title">Preliminary Assessment</h4>
+                                <p id="triage-message">Standard outpatient consultation.</p>
+                            </div>
+                        </div>
+
+                        <!-- Red Flags Container -->
+                        <div id="red-flags-box" class="red-flags-alert hidden">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div>
+                                <strong>Clinical Red Flags Identified:</strong>
+                                <ul id="red-flags-list"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Primary Diagnosis Card -->
+                        <div class="primary-diagnosis-card">
+                            <div class="diag-header">
+                                <span class="badge-tag" id="diag-category">ENT / Respiratory</span>
+                                <span class="icd-code" id="diag-icd">ICD-10: R04.0</span>
+                            </div>
+                            <h3 id="diag-disease-name">Epistaxis & Acute Sinusitis</h3>
+                            <p id="diag-description" class="diag-desc">Nose bleeding associated with inflamed paranasal sinuses.</p>
+                            
+                            <!-- Confidence Meter -->
+                            <div class="confidence-box">
+                                <div class="conf-label">
+                                    <span>AI Probability Confidence Score</span>
+                                    <strong id="diag-confidence-val">82.6%</strong>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill" id="diag-confidence-bar" style="width: 82.6%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Differential Diagnosis Table -->
+                        <div class="sub-card">
+                            <h4><i class="fa-solid fa-list-ol"></i> Differential Diagnosis Ranking</h4>
+                            <div class="table-responsive">
+                                <table class="custom-table" id="differential-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Condition / Disease</th>
+                                            <th>Probability</th>
+                                            <th>Confidence Metric</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="differential-tbody">
+                                        <!-- Populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Diagnostic Test Recommendations -->
+                        <div class="sub-card">
+                            <h4><i class="fa-solid fa-vial-virus"></i> Recommended Diagnostic Investigations</h4>
+                            <div class="tests-grid" id="recommended-tests-grid">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-flex">
+                            <button class="btn-secondary" onclick="switchTab('tab-treatment')">
+                                <i class="fa-solid fa-prescription-bottle-medical"></i> View Suggested Medications & Specialists
+                            </button>
+                            <button class="btn-secondary" onclick="switchTab('tab-database')">
+                                <i class="fa-solid fa-table"></i> View in Database Explorer
+                            </button>
+                            <button class="btn-secondary" onclick="switchTab('tab-report')">
+                                <i class="fa-solid fa-print"></i> Generate Medical Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 2: TREATMENT & PREVENTIVE MEASURES -->
+        <section id="tab-treatment" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-pills"></i> Healthcare Treatment & Preventive Measures Hub</h2>
+                <p>Condition & symptom-tailored medication regimens, dosage timing instructions, safety alerts, and verified specialist doctors with Google review ratings.</p>
+            </div>
+
+            <div class="grid-layout-2col">
+                <!-- Medications & Contraindications Card -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-capsules"></i> Suggested Medications & Dosage Rules</h3>
+                        <span class="sub-text">Dynamic prescriptions adapted to diagnosed condition, active symptoms & allergy screening</span>
+                    </div>
+                    <div id="medications-container" class="meds-list">
+                        <!-- Populated via JS -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-prescription"></i>
+                            <p>Run a diagnosis in the Clinical Diagnosis tab to generate accurate medication guidelines.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preventive Measures & Lifestyle Card -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-shield-heart"></i> Evidence-Based Preventive Measures</h3>
+                        <span class="sub-text">Emergency first-aid, dietary plans, and lifestyle modifications</span>
+                    </div>
+                    <div id="preventive-container" class="preventive-list">
+                        <!-- Populated via JS -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-heart-circle-check"></i>
+                            <p>Preventive measures will populate following diagnostic evaluation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specialist Doctor Matching Section -->
+            <div class="glass-card margin-top-lg">
+                <div class="card-header-flex">
+                    <div>
+                        <h3><i class="fa-solid fa-user-doctor"></i> Verified Specialist Doctors Available</h3>
+                        <span class="sub-text">Matched to diagnosed pathology with verified Google ratings, consultation fees, and profile links</span>
+                    </div>
+                    <span class="badge-tag" style="background: rgba(6, 182, 212, 0.2); color: var(--primary-cyan);">
+                        <i class="fa-brands fa-google"></i> Google Verified Profiles
+                    </span>
+                </div>
+                <div class="doctors-grid" id="specialists-grid">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB: DIGITAL HEALTH TWIN & 10-YEAR PROGNOSTIC RISK SIMULATOR -->
+        <section id="tab-simulator" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-dna"></i> "What-If" Digital Health Twin & 10-Year Prognostic Risk Simulator</h2>
+                <p>Prescriptive Data Mining & Health Forecasting Engine based on Framingham & ACC/AHA Multi-Variable Log-Odds Regression Models.</p>
+            </div>
+
+            <div class="grid-layout-2col">
+                <!-- Left Panel: Interactive What-If Sliders -->
+                <div class="glass-card">
+                    <div class="card-header-flex">
+                        <div>
+                            <h3><i class="fa-solid fa-sliders"></i> Interactive Biomarker Sliders</h3>
+                            <span class="sub-text">Modify vitals in real time to forecast future clinical outcomes</span>
+                        </div>
+                        <button class="pill-btn-sm" onclick="syncSimulatorWithCdss()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Sync Current Patient
+                        </button>
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-label-row">
+                            <span><i class="fa-solid fa-calendar-day"></i> Chronological Age:</span>
+                            <strong id="sim-val-age">45 Years</strong>
+                        </div>
+                        <input type="range" class="sim-range-slider" id="sim-range-age" min="20" max="85" value="45" oninput="updateSimValue('age', this.value)">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-label-row">
+                            <span><i class="fa-solid fa-weight-scale"></i> Body Mass Index (BMI):</span>
+                            <strong id="sim-val-bmi">28.4 kg/m²</strong>
+                        </div>
+                        <input type="range" class="sim-range-slider" id="sim-range-bmi" min="18.5" max="42.0" step="0.2" value="28.4" oninput="updateSimValue('bmi', this.value)">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-label-row">
+                            <span><i class="fa-solid fa-heart-pulse"></i> Systolic Blood Pressure:</span>
+                            <strong id="sim-val-bpsys">145 mmHg</strong>
+                        </div>
+                        <input type="range" class="sim-range-slider" id="sim-range-bpsys" min="95" max="200" step="1" value="145" oninput="updateSimValue('bpsys', this.value)">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-label-row">
+                            <span><i class="fa-solid fa-droplet"></i> Fasting Blood Glucose:</span>
+                            <strong id="sim-val-glucose">130 mg/dL</strong>
+                        </div>
+                        <input type="range" class="sim-range-slider" id="sim-range-glucose" min="70" max="260" step="1" value="130" oninput="updateSimValue('glucose', this.value)">
+                    </div>
+
+                    <div class="slider-control-group">
+                        <div class="slider-label-row">
+                            <span><i class="fa-solid fa-vial"></i> Total Serum Cholesterol:</span>
+                            <strong id="sim-val-cholesterol">220 mg/dL</strong>
+                        </div>
+                        <input type="range" class="sim-range-slider" id="sim-range-cholesterol" min="130" max="340" step="2" value="220" oninput="updateSimValue('cholesterol', this.value)">
+                    </div>
+
+                    <div class="form-grid-2col margin-top-md">
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-smoking"></i> Smoking Habits</label>
+                            <select id="sim-select-smoking" onchange="runSimForecast()">
+                                <option value="Never">Never Smoked</option>
+                                <option value="Former">Former Smoker</option>
+                                <option value="Current" selected>Current Smoker</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-person-running"></i> Physical Activity</label>
+                            <select id="sim-select-activity" onchange="runSimForecast()">
+                                <option value="Sedentary" selected>Sedentary (Low)</option>
+                                <option value="Moderate">Moderate (3x/wk)</option>
+                                <option value="Active">Active (Athletic)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="margin-top-md">
+                        <button class="btn-action-primary" onclick="runSimForecast()">
+                            <i class="fa-solid fa-chart-line"></i> Recalculate 10-Year Risk Trajectory
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Biological Age & 10-Year Trajectory Line Chart -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-area"></i> Forecasted Health Twin Trajectory</h3>
+                        <span class="sub-text">Biological vs Chronological age and 10-year comparative event curves</span>
+                    </div>
+
+                    <!-- Digital Health Twin Metric Cards -->
+                    <div class="twin-metrics-grid">
+                        <div class="twin-metric-card" id="card-bio-age">
+                            <span class="twin-title">Biological Vascular Age</span>
+                            <h3 id="twin-bio-age-val">58.2 Yrs</h3>
+                            <span class="twin-badge badge-warning" id="twin-age-diff-badge">+13.2 Yrs Older</span>
+                        </div>
+
+                        <div class="twin-metric-card">
+                            <span class="twin-title">10-Year CVD Risk</span>
+                            <h3 id="twin-cvd-risk-val">42.5%</h3>
+                            <span class="twin-badge badge-danger" id="twin-cvd-badge">Elevated Risk</span>
+                        </div>
+
+                        <div class="twin-metric-card">
+                            <span class="twin-title">5-Yr Diabetes Onset</span>
+                            <h3 id="twin-diab-risk-val">28.4%</h3>
+                            <span class="twin-badge" id="twin-diab-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">Moderate</span>
+                        </div>
+
+                        <div class="twin-metric-card" id="card-gain">
+                            <span class="twin-title">Potential Risk Reduction</span>
+                            <h3 id="twin-gain-val" style="color: var(--primary-emerald);">-54.8%</h3>
+                            <span class="twin-badge badge-success" id="twin-years-gained-badge">+5.4 Yrs Gained</span>
+                        </div>
+                    </div>
+
+                    <!-- 10-Year Trajectory Line Chart -->
+                    <div class="chart-container margin-top-md" style="height: 260px;">
+                        <canvas id="trajectoryChart"></canvas>
+                    </div>
+
+                    <!-- Prescriptive Targets -->
+                    <div class="prescriptive-box margin-top-md">
+                        <h4><i class="fa-solid fa-bullseye"></i> Prescriptive Lifestyle & Clinical Targets:</h4>
+                        <div class="prescriptive-list" id="prescriptive-actions-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 3: RELATIONAL DATABASE EXPLORER -->
+        <section id="tab-database" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-database"></i> Relational Healthcare Database Explorer (SQLite)</h2>
+                <p>Inspect normalized relational tables, browse patient intake records (stored directly from CDSS), and test custom SQL analytical queries.</p>
+            </div>
+
+            <!-- Database Schema Cards -->
+            <div class="db-schema-grid" id="db-schema-cards">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Patient Records Browser -->
+            <div class="glass-card margin-top-lg">
+                <div class="card-header-flex">
+                    <div>
+                        <h3><i class="fa-solid fa-hospital-user"></i> Patient Records Database</h3>
+                        <span class="sub-text">Latest registered patients & evaluated clinical cases (sorted newest first)</span>
+                    </div>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="patient-search-input" placeholder="Search patient name, condition, or risk..." onkeyup="searchPatients()">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="custom-table" id="patients-db-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Name</th>
+                                <th>Age / Gender</th>
+                                <th>BMI</th>
+                                <th>Blood Pressure</th>
+                                <th>Glucose</th>
+                                <th>Cholesterol</th>
+                                <th>Smoking / Activity</th>
+                                <th>Risk Category</th>
+                                <th>Diagnosed Condition</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination-bar" id="patient-pagination">
+                    <button class="btn-icon" id="btn-prev-page" onclick="changePatientPage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="page-indicator">Page 1 of 67</span>
+                    <button class="btn-icon" id="btn-next-page" onclick="changePatientPage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Custom SQL Query Sandbox -->
+            <div class="glass-card margin-top-lg">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-terminal"></i> Clinical SQL Analytical Query Sandbox</h3>
+                    <span class="sub-text">Execute read-only SQL queries against the relational healthcare database tables</span>
+                </div>
+                
+                <div class="sql-preset-bar">
+                    <span>Quick SQL Presets:</span>
+                    <button class="pill-btn-sm" onclick="setSqlPreset(1)">Recent Patients Diagnosed</button>
+                    <button class="pill-btn-sm" onclick="setSqlPreset(2)">Disease vs Symptoms Count</button>
+                    <button class="pill-btn-sm" onclick="setSqlPreset(3)">High Risk Patients</button>
+                    <button class="pill-btn-sm" onclick="setSqlPreset(4)">Specialist Doctors Directory</button>
+                </div>
+
+                <div class="sql-editor-box">
+                    <textarea id="sql-query-input" rows="3" placeholder="SELECT * FROM patients ORDER BY id DESC LIMIT 10;"></textarea>
+                    <button class="btn-primary-sm" onclick="runCustomSqlQuery()">
+                        <i class="fa-solid fa-play"></i> Execute SQL Query
+                    </button>
+                </div>
+
+                <div id="sql-results-container" class="margin-top-md hidden">
+                    <h4 id="sql-result-count">Query Results:</h4>
+                    <div class="table-responsive">
+                        <table class="custom-table" id="sql-results-table">
+                            <thead id="sql-thead"></thead>
+                            <tbody id="sql-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 4: DATA MINING VISUALIZER SANDBOX -->
+        <section id="tab-datamining" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-diagram-project"></i> Data Mining & Analytics Visualizer</h2>
+                <p>Interactive visual representations of Apriori Association Rules, K-Means Patient Clusters, and Machine Learning Model Benchmarks.</p>
+            </div>
+
+            <div class="grid-layout-2col">
+                <!-- Apriori Association Rules Card -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-network-wired"></i> Apriori Association Rules (Symptom Co-occurrences)</h3>
+                        <span class="sub-text">Discovered clinical association rules showing frequent itemsets (Support, Confidence, Lift)</span>
+                    </div>
+                    <div class="table-responsive max-height-400">
+                        <table class="custom-table" id="apriori-rules-table">
+                            <thead>
+                                <tr>
+                                    <th>Antecedent (If)</th>
+                                    <th>Consequent (Then)</th>
+                                    <th>Support</th>
+                                    <th>Confidence</th>
+                                    <th>Lift</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apriori-tbody">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Machine Learning Model Benchmark Comparison -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-column"></i> Machine Learning Classifier Benchmark</h3>
+                        <span class="sub-text">Comparative accuracy, precision, recall and F1-scores across 4 algorithms</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="benchmarkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- K-Means Patient Risk Clustering Scatter Plot -->
+            <div class="glass-card margin-top-lg">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-circle-nodes"></i> K-Means Patient Risk Segmentation (2D PCA Projection)</h3>
+                    <span class="sub-text">4 Unsupervised Clusters grouping 1,000 patients by age, BMI, BP, glucose & cholesterol</span>
+                </div>
+
+                <div class="grid-layout-2col">
+                    <div class="chart-container-lg">
+                        <canvas id="clusterChart"></canvas>
+                    </div>
+                    <div class="cluster-summary-box" id="cluster-summaries-container">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 5: MEDICAL REPORT GENERATOR -->
+        <section id="tab-report" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-file-pdf"></i> Consultation Summary & Printable PDF Report</h2>
+                <p>Export a formatted, clinical-grade medical consultation summary containing patient identification, vitals, diagnosis, and prescription details.</p>
+            </div>
+
+            <div class="report-controls">
+                <button class="btn-action-primary" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print Consultation Report / Save as PDF
+                </button>
+            </div>
+
+            <div class="printable-report-sheet" id="printable-report-sheet">
+                <div class="report-header">
+                    <div class="report-brand">
+                        <h2>MediMind Healthcare Center</h2>
+                        <p>Department of Clinical Decision Support & Health Data Mining</p>
+                    </div>
+                    <div class="report-meta">
+                        <p><strong>Report Date:</strong> <span id="report-date">2026-11-11</span></p>
+                        <p><strong>Medical Record ID:</strong> <span id="rpt-patient-id">#CDSS-1001</span></p>
+                    </div>
+                </div>
+
+                <hr class="report-divider">
+
+                <div class="report-grid-2col">
+                    <div>
+                        <h4>Patient Information</h4>
+                        <p><strong>Patient Name:</strong> <span id="rpt-patient-name" style="font-weight: 700; color: #0284c7;">Rahul Sharma</span></p>
+                        <p><strong>Age / Gender:</strong> <span id="rpt-patient-age-gender">38 yrs / Male</span></p>
+                        <p><strong>BMI:</strong> <span id="rpt-patient-bmi">25.4 kg/m²</span></p>
+                        <p><strong>Blood Pressure:</strong> <span id="rpt-patient-bp">128/84 mmHg</span></p>
+                        <p><strong>Blood Glucose:</strong> <span id="rpt-patient-glucose">105 mg/dL</span></p>
+                    </div>
+                    <div>
+                        <h4>Clinical History & Allergies</h4>
+                        <p id="rpt-medical-history">Recurrent Epistaxis, Penicillin Allergy</p>
+                        <h4 style="margin-top: 10px;">Clinical Triage Rating</h4>
+                        <p><strong id="rpt-triage-level" style="color: #ef4444;">URGENT CLINICAL ASSESSMENT</strong></p>
+                    </div>
+                </div>
+
+                <hr class="report-divider">
+
+                <div class="report-section">
+                    <h4>Primary Clinical Diagnosis (Data Mining & ML Engine)</h4>
+                    <table class="report-table">
+                        <tr>
+                            <th>Diagnosed Condition</th>
+                            <th>ICD-10 Code</th>
+                            <th>AI Confidence</th>
+                            <th>Clinical Category</th>
+                        </tr>
+                        <tr>
+                            <td id="rpt-diag-name">Epistaxis & Acute Sinusitis</td>
+                            <td id="rpt-diag-icd">R04.0</td>
+                            <td id="rpt-diag-conf">82.6%</td>
+                            <td id="rpt-diag-cat">ENT</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="report-section">
+                    <h4>Active Symptoms Presented</h4>
+                    <p id="rpt-symptoms-list">Nose Bleeding (Epistaxis), Nasal Congestion, Facial Pain / Sinus Pressure</p>
+                </div>
+
+                <div class="report-section">
+                    <h4>Prescribed Medication & Dosage Instructions</h4>
+                    <table class="report-table" id="rpt-meds-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Standard Dosage</th>
+                                <th>Schedule / Timing</th>
+                                <th>Safety & Contraindications</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rpt-meds-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="report-section">
+                    <h4>Evidence-Based Preventive Measures & Lifestyle Advice</h4>
+                    <ul id="rpt-preventive-list">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+
+                <div class="report-section">
+                    <h4>Recommended Diagnostic Laboratory Tests</h4>
+                    <ul id="rpt-tests-list">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+
+                <div class="report-footer">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <p>Attending Physician / Clinician Signature</p>
+                    </div>
+                    <div class="disclaimer">
+                        <p><em>Notice: This report was generated using the MediMind Clinical Decision Support System. Clinical discretion should always be exercised by a certified healthcare professional.</em></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TAB 6: PROJECT DOCS & ML TUNING -->
+        <section id="tab-about" class="tab-pane">
+            <div class="content-header">
+                <h2><i class="fa-solid fa-graduation-cap"></i> Academic Documentation & ML Architecture</h2>
+                <p>7th Semester Engineering Project Documentation detailing system methodology, algorithms, and relational data architecture.</p>
+            </div>
+
+            <div class="grid-layout-2col">
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-book"></i> Project Overview & Abstract</h3>
+                    </div>
+                    <div class="doc-text">
+                        <p>The <strong>Intelligent Healthcare Recommendation System</strong> uses data mining and machine learning to analyze patient symptoms, physiological vitals, medical history, and treatment records stored in normalized relational databases.</p>
+                        <h4>Key Data Mining Methodologies Implemented:</h4>
+                        <ul>
+                            <li><strong>Supervised Multi-Classifier (Random Forest, Naive Bayes, Decision Tree, KNN)</strong>: Learns symptom-disease diagnostic mapping to provide differential diagnosis with confidence intervals.</li>
+                            <li><strong>Association Rule Mining (Apriori Algorithm)</strong>: Uncovers co-occurrence patterns across symptoms and past treatment records (`Support`, `Confidence`, `Lift`).</li>
+                            <li><strong>Unsupervised Clustering (K-Means)</strong>: Groups patient populations into 4 health risk personas based on vital metrics (BP, glucose, cholesterol, BMI).</li>
+                            <li><strong>Clinical Decision Support System (CDSS)</strong>: Recommends line-of-treatment medications, dosage guidelines, contraindication alerts, and preventive care.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-sliders"></i> ML Model Retraining & Parameter Tuning</h3>
+                    </div>
+                    <div class="tuning-controls">
+                        <div class="info-card">
+                            <h4>Current Classifier Status:</h4>
+                            <p>Random Forest Accuracy: <strong id="rf-acc-text">90.2%</strong></p>
+                            <p>KNN Accuracy: <strong id="knn-acc-text">93.5%</strong></p>
+                            <p>Training Sample Size: <strong>3,000 synthetic patient instances</strong></p>
+                            <p>Relational Database Records: <strong>1,000+ patients, 53 symptoms, 24 diseases, 32 medications</strong></p>
+                        </div>
+
+                        <button class="btn-action-primary margin-top-md" onclick="retrainModels()">
+                            <i class="fa-solid fa-rotate"></i> Retrain Machine Learning Models Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Doctor Details & Google Search -->
+    <div id="doctor-modal" class="modal-overlay hidden" onclick="closeDoctorModal(event)">
+        <div class="modal-content glass-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-doctor"></i> Doctor Profile & Clinic Details</h3>
+                <button class="btn-close" onclick="closeDoctorModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="doctor-modal-body">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Files -->
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
